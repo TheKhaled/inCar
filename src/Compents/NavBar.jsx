@@ -43,7 +43,7 @@ export default function NavBar() {
 
         <div className="mr-10">
           <NavLink
-            to={"/creatPost/new"}
+            to={"/createPost/new"}
             className={({ isActive }) =>
               isActive ? "btn btn-ghost text-xl" : "font-bold"
             }

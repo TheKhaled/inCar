@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
@@ -9,12 +9,15 @@ import CreatePost from "./Compents/pages/CreatPost";
 import Login from "./Compents/pages/login";
 import { auth, db } from "./config/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { UserContext } from "./Context/UserContext";
+import { onAuthStateChanged } from "firebase/auth";
 
 function App() {
   const [items, setItems] = useState([]);
 
   const factoriesCollection = collection(db, "factories");
-
+  const { user } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   useEffect(() => {
     const getPosts = async () => {
       try {
@@ -31,6 +34,28 @@ function App() {
     };
 
     getPosts();
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({
+          username: user.displayName,
+          userId: user.uid,
+          email: user.email,
+          isLog: true,
+          photoURL: user.photoURL,
+        });
+      } else {
+        setUser({
+          username: null,
+          userId: null,
+          email: null,
+          isLog: false,
+          photoURL: null,
+        });
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleDataAfterPost = (newProduct) => {

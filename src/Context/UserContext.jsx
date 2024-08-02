@@ -1,4 +1,6 @@
 import React, { createContext, useState } from "react";
+import { auth } from "../config/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 //  1
 export const UserContext = createContext(null);
@@ -10,6 +12,15 @@ export default function UserContextProvider(props) {
     isLog: false,
     photoURL: false,
   });
+
+  // const unsbscribe = auth.onAuthStateChanged((user) => {
+  //   setcurrentUser(user);
+  //   setisAuth(user);
+  // });
+
+  // onAuthStateChanged(auth, (user) => {  // user what must be
+  //   setCurrentUser(user)
+  //  })
 
   // how to take the  email  from the form   to pss here in this email
 

@@ -110,7 +110,7 @@ export default function Posts({ items, handelRemove }) {
                   <div
                     onClick={() => {
                       console.log(item.id); // the proplem here  why ???
-                      navigate(`/creatPost/${item.id}`);
+                      navigate(`/createPost/${item.id}`);
                       ``;
                     }}
                     className="cursor-pointer"
