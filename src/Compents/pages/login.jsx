@@ -81,7 +81,6 @@ export default function Login() {
         photoURL: auth?.currentUser?.photoURL,
         isLog: true,
       });
-     
 
       navigate("/");
     } catch (error) {

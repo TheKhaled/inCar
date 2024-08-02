@@ -7,10 +7,10 @@ import { UserContext } from "../../Context/UserContext";
 import { toast } from "react-toastify";
 
 export default function CreatPost({
-  factoirsColloiction,
-  HandelDataAfterPosr,
-  items,
-  HandeAfterEdit,
+  factoriesCollection,
+  handleDataAfterPost,
+
+  handleAfterEdit,
 }) {
   const postDescRef = useRef();
   const Imgeref = useRef();
@@ -19,7 +19,6 @@ export default function CreatPost({
   const cleanId = id.startsWith(":") ? id.slice(1) : id;
   const mood = id === "new" ? "add" : "edit";
 
-  console.log({ id }, mood);
   const date = new Date();
   const editDate =
     `${String(date.getMonth() + 1).padStart(2, "0")}` + // Month (1-based)
@@ -42,7 +41,7 @@ export default function CreatPost({
 
     const writeToFireSrore = async () => {
       try {
-        const docRef = await addDoc(factoirsColloiction, {
+        const docRef = await addDoc(factoriesCollection, {
           userId: auth?.currentUser?.uid ?? null,
           userName: auth?.currentUser?.displayName ?? null,
           date: date,
@@ -57,7 +56,7 @@ export default function CreatPost({
         });
         toast.success("post created sucess");
         const postId = docRef.id;
-        HandelDataAfterPosr({
+        handleDataAfterPost({
           descrption: postDescValue,
           userId: auth?.currentUser?.uid ?? null,
           email: auth?.currentUser?.email ?? null,
@@ -80,7 +79,6 @@ export default function CreatPost({
     };
 
     const UpdateToFireStore = async (id) => {
-      toast.error("there is a proplem on edit we are going ot edit it ");
       const itemWantTOUpdate = doc(db, "factories", id);
       console.log(id);
       try {
@@ -88,21 +86,24 @@ export default function CreatPost({
           descrption: postDescValue,
         });
 
-        HandeAfterEdit({
+        handleAfterEdit({
+          /////////////////////
           descrption: postDescValue,
           userId: auth?.currentUser?.uid ?? null,
           email: auth?.currentUser?.email ?? null,
-          date: date,
+
           userName: auth?.currentUser?.displayName ?? null,
           photoURL: auth?.currentUser?.photoURL ?? null,
-          photoOFBost: postImageFile
-            ? editDate + (auth?.currentUser?.email ?? "")
-            : null,
+          // photoOFBost: postImageFile
+          //   ? editDate + (auth?.currentUser?.email ?? "")
+          //   : null,
 
           id: id,
         });
+        toast.success("post updated sucess");
         nagigate("/");
       } catch (error) {
+        toast.error("there is error try to refresh the page");
         console.log(error);
       }
     };
@@ -122,21 +123,27 @@ export default function CreatPost({
       try {
         await uploadBytes(filesFolderRef, postImageFile);
       } catch (error) {
+        toast.error("there is error in picture");
         console.log(error);
       }
     } else return;
   };
 
-  const { user } = useContext(UserContext);
-  console.log("====================================");
-  console.log(user.userId);
-  console.log("====================================");
+  const { user, itemWantToUpdate } = useContext(UserContext);
+  //console.log("====================================");
+  // console.log(user.userId);
+  //.log("====================================");
 
   useEffect(() => {
     if (!user.userId) {
       nagigate("/login");
+      console.log("nooooooooooooooooo");
+    } else {
+      console.log("yessssss");
     }
-  }, [user.userId, nagigate]);
+
+    //console.log("itemWantToUpdate", itemWantToUpdate);
+  }, []);
 
   return (
     <div>
@@ -159,6 +166,7 @@ export default function CreatPost({
                 name="name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter product name"
+                defaultValue={mood == "edit" ? itemWantToUpdate.descrption : ""}
               />
             </div>
 

@@ -9,24 +9,19 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { UserContext } from "../Context/UserContext";
 import { toast } from "react-toastify";
 
-export default function Posts({ items, handelRemove }) {
+export default function Posts({ items, handleRemove }) {
   let srcPic =
     " https://media.licdn.com/dms/image/C4D1BAQH5g4MrshNy8g/company-background_10000/0/1627607051117/elsfacars_cover?e=2147483647&v=beta&t=_iGhXKK91OqxaPV5j9JL7FxjFdzptJI_ppcK-HmX9Ok";
   const navigate = useNavigate();
   const datenow = new Date();
 
-  console.log(items);
-
   const DeleteItemfromFireStore = async (item) => {
-    console.log(item);
-    console.log(item.id);
-
     const itemWantToDelete = doc(db, "factories", item.id);
 
     try {
-      handelRemove(item);
       await deleteDoc(itemWantToDelete);
       toast.success("post is deleted");
+      handleRemove(item);
     } catch (error) {
       toast.error("Failed to delete post  please refresh the page");
       console.log(error);
@@ -36,13 +31,11 @@ export default function Posts({ items, handelRemove }) {
   const navgiate = useNavigate();
   const [urls, setUrls] = useState({});
 
-  const { user } = useContext(UserContext);
+  const { user, setitemWantToUpdate } = useContext(UserContext);
+
   return (
     <div>
       {items?.map((item) => {
-        console.log(item);
-        console.log("=======###=============================");
-
         return (
           <div
             className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden mt-5 mb-5"
@@ -68,8 +61,9 @@ export default function Posts({ items, handelRemove }) {
                 <div className="flex gap-4">
                   <div
                     onClick={() => {
-                      console.log(item.id); // the proplem here  why ???
-                      navigate(`/createPost/${item.id}`);
+                      setitemWantToUpdate(item); // why is wrong   I want to pass item
+
+                      navigate(`/CreatPost/${item.id}`);
                       ``;
                     }}
                     className="cursor-pointer"

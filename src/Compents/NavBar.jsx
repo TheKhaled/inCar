@@ -22,7 +22,7 @@ export default function NavBar() {
         userId: null,
         email: null,
         isLog: false,
-        photoURL: false,
+        photoURL: null,
       });
     } catch (error) {
       seterrorLogin(error);
@@ -43,7 +43,7 @@ export default function NavBar() {
 
         <div className="mr-10">
           <NavLink
-            to={"/createPost/new"}
+            to={"/CreatPost/new"}
             className={({ isActive }) =>
               isActive ? "btn btn-ghost text-xl" : "font-bold"
             }
