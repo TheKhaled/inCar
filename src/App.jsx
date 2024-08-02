@@ -11,6 +11,7 @@ import { auth, db } from "./config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { UserContext } from "./Context/UserContext";
 import { onAuthStateChanged } from "firebase/auth";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 function App() {
   const [items, setItems] = useState([]);
@@ -18,6 +19,33 @@ function App() {
   const factoriesCollection = collection(db, "factories");
   const { user } = useContext(UserContext);
   const { setUser } = useContext(UserContext);
+  const [urls, setUrls] = useState({});
+
+  const fetchUrls = async (items) => {
+    const newUrls = {};
+    for (const item of items) {
+      if (item.photoOFBost) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `/postpic/${item.photoOFBost}`);
+        try {
+          const url = await getDownloadURL(storageRef);
+          newUrls[item.id] = url;
+        } catch (error) {
+          console.log(`Failed to fetch URL for ${item.photoOFBost}:`, error);
+        }
+      }
+    }
+    // setUrls(newUrls);
+    let newItems = [...items];
+    newItems = newItems.map((item) => ({
+      ...item,
+      theURL: newUrls[item.id],
+    }));
+    setItems(newItems);
+    console.log("!!!!!!!!!!", items); // it don't  gte the  theURL in the item of items
+    console.log("@@@@@@@@@@@@@@@@@@@", newUrls); //  here it log the url correctly
+  };
+
   useEffect(() => {
     const getPosts = async () => {
       try {
@@ -28,6 +56,7 @@ function App() {
         }));
 
         setItems(cleanResData);
+        await fetchUrls(cleanResData);
       } catch (error) {
         console.log(error);
       }
@@ -56,6 +85,8 @@ function App() {
     });
 
     return () => unsubscribe();
+
+    //
   }, []);
 
   const handleDataAfterPost = (newProduct) => {
@@ -109,3 +140,5 @@ function App() {
 }
 
 export default App;
+
+//git push -u origin main

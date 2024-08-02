@@ -35,54 +35,13 @@ export default function Posts({ items, handelRemove }) {
 
   const navgiate = useNavigate();
   const [urls, setUrls] = useState({});
-  useEffect(() => {
-    const fetchUrls = async () => {
-      const newUrls = {};
-      for (const item of items) {
-        if (item.photoOFBost) {
-          const storage = getStorage();
-          const storageRef = ref(storage, `/postpic/${item.photoOFBost}`);
-          try {
-            const url = await getDownloadURL(storageRef);
-            newUrls[item.id] = url;
-          } catch (error) {
-            console.log(`Failed to fetch URL for ${item.photoOFBost}:`, error);
-          }
-        }
-      }
-      setUrls(newUrls);
-    };
-
-    fetchUrls();
-  }, []);
 
   const { user } = useContext(UserContext);
   return (
     <div>
       {items?.map((item) => {
-        console.log("====================================");
         console.log(item);
-        console.log("====================================");
-
-        //   there  is  item.photoOFBost
-        //   I want to  get the url of picture its names is item.photoOFBost   in folder /postpic in  the Storage in firebase
-        // and setURl() the url
-
-        // let urlll = null;
-        // const fetchUrl = async (item) => {
-        //   if (item.photoOFBost) {
-        //     const storage = getStorage();
-        //     const storageRef = ref(storage, `/postpic/${item.photoOFBost}`);
-        //     const url = await getDownloadURL(storageRef);
-        //     urlll = url;
-        //     console.log("====================================");
-        //     console.log(url);
-        //     console.log(urlll, url);
-        //     console.log("====================================");
-        //   }
-        // };
-
-        // fetchUrl(item);
+        console.log("=======###=============================");
 
         return (
           <div
@@ -134,10 +93,10 @@ export default function Posts({ items, handelRemove }) {
             <div className="p-4">
               <p className="text-gray-800 mb-4">{item.descrption}</p>
             </div>
-            {urls[item.id] ? ( // why is == null althoug  it is hav value
+            {item.theURL ? ( // why is == null althoug  it is hav value
               <img
                 className="w-full h-auto object-co`ver rounded-lg"
-                src={urls[item.id]}
+                src={item.theURL}
                 alt="Post"
               />
             ) : (
