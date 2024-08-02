@@ -55,7 +55,7 @@ export default function CreatPost({
             ? editDate + (auth?.currentUser?.email ?? "")
             : null,
         });
-        toast.success("post created sucess");
+        toast.success("post created  sucessfull");
         const postId = docRef.id;
         HandelDataAfterPosr({
           descrption: postDescValue,
@@ -74,7 +74,7 @@ export default function CreatPost({
         );
         nagigate("/");
       } catch (error) {
-        toast.error("there is error try to refresh the page");
+        toast.error("there is  error try to refresh the page");
         console.log(error);
       }
     };
