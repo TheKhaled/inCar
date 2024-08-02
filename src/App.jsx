@@ -12,10 +12,11 @@ import { collection, getDocs } from "firebase/firestore";
 import { UserContext } from "./Context/UserContext";
 import { onAuthStateChanged } from "firebase/auth";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import CreatPost from "./Compents/pages/CreatPost";
 
 function App() {
   const [items, setItems] = useState([]);
-
+  const [itemWantToUpdate, setitemWantToUpdate] = useState();
   const factoriesCollection = collection(db, "factories");
   const { user } = useContext(UserContext);
   const { setUser } = useContext(UserContext);
@@ -42,8 +43,6 @@ function App() {
       theURL: newUrls[item.id],
     }));
     setItems(newItems);
-    console.log("!!!!!!!!!!", items); // it don't  gte the  theURL in the item of items
-    console.log("@@@@@@@@@@@@@@@@@@@", newUrls); //  here it log the url correctly
   };
 
   useEffect(() => {
@@ -69,6 +68,7 @@ function App() {
         setUser({
           username: user.displayName,
           userId: user.uid,
+          //userId: auth?.currentUser?.uid,
           email: user.email,
           isLog: true,
           photoURL: user.photoURL,
@@ -110,9 +110,13 @@ function App() {
 
   const handleAfterEdit = (toEditItem) => {
     setItems((prevItems) =>
-      prevItems.map((item) => (item.id === toEditItem.id ? toEditItem : item))
+      prevItems.map((item) =>
+        item.id === toEditItem.id ? { ...item, ...toEditItem } : item
+      )
     );
   };
+
+  // console.log(items);
 
   return (
     <div>
@@ -123,10 +127,10 @@ function App() {
           element={<Posts items={items} handleRemove={handleRemove} />}
         />
         <Route
-          path="/createPost/:id"
+          path="/CreatPost/:id"
           element={
-            <CreatePost
-              items={items}
+            <CreatPost
+              //itemWantToUpdate={itemWantToUpdate}
               handleDataAfterPost={handleDataAfterPost}
               factoriesCollection={factoriesCollection}
               handleAfterEdit={handleAfterEdit}

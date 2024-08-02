@@ -12,7 +12,7 @@ export default function UserContextProvider(props) {
     isLog: false,
     photoURL: false,
   });
-
+  const [itemWantToUpdate, setitemWantToUpdate] = useState([]);
   // const unsbscribe = auth.onAuthStateChanged((user) => {
   //   setcurrentUser(user);
   //   setisAuth(user);
@@ -30,7 +30,9 @@ export default function UserContextProvider(props) {
   //   const [active, setActive] = useState("0");
   return (
     //2
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider
+      value={{ user, setUser, itemWantToUpdate, setitemWantToUpdate }}
+    >
       {props.children}
     </UserContext.Provider>
   );
