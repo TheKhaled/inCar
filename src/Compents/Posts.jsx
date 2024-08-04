@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { UserContext } from "../Context/UserContext";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 export default function Posts({ items, handleRemove }) {
   let srcPic =
@@ -32,10 +33,15 @@ export default function Posts({ items, handleRemove }) {
   const [urls, setUrls] = useState({});
 
   const { user, setitemWantToUpdate } = useContext(UserContext);
+  const sortedItems = items?.sort(
+    (a, b) =>
+      (b.date.toDate ? b.date.toDate().getTime() : new Date(b.date).getTime()) -
+      (a.date.toDate ? a.date.toDate().getTime() : new Date(a.date).getTime())
+  );
 
   return (
     <div>
-      {items?.map((item) => {
+      {sortedItems?.map((item) => {
         return (
           <div
             className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden mt-5 mb-5"
@@ -51,9 +57,13 @@ export default function Posts({ items, handleRemove }) {
                 />
                 <div className="ml-3">
                   <h2 className="text-lg font-semibold">{item.userName}</h2>
+
                   <p className="text-sm text-gray-600">
-                    {/* {new Date(item.date.seconds * 1000).toLocaleString()} */}
-                    2 days ago
+                    {moment(
+                      item.date.toDate
+                        ? item.date.toDate()
+                        : new Date(item.date)
+                    ).fromNow()}
                   </p>
                 </div>
               </div>

@@ -73,7 +73,6 @@ export default function CreatPost({
           userName: auth?.currentUser?.displayName ?? null,
           photoURL: auth?.currentUser?.photoURL ?? null,
           imgeURl: imgeURl ?? null,
-          photoOFBost: imgeURl ?? "08010326835khaledhishamays16@gmail.com",
 
           //,
         });
