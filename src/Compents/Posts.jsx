@@ -87,7 +87,13 @@ export default function Posts({ items, handleRemove }) {
             <div className="p-4">
               <p className="text-gray-800 mb-4">{item.descrption}</p>
             </div>
-            {item.theURL ? ( // why is == null althoug  it is hav value
+            {item.imgeURl ? (
+              <img
+                className="w-full h-auto object-co`ver rounded-lg"
+                src={item.imgeURl}
+                alt="Post"
+              />
+            ) : item.theURL ? ( // I made this cause there is some data on fire base has this filed named theURL
               <img
                 className="w-full h-auto object-co`ver rounded-lg"
                 src={item.theURL}

@@ -1,10 +1,11 @@
 import { addDoc, doc, updateDoc } from "firebase/firestore";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { auth, db, storage } from "../../config/firebase";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { UserContext } from "../../Context/UserContext";
 import { toast } from "react-toastify";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function CreatPost({
   factoriesCollection,
@@ -27,7 +28,7 @@ export default function CreatPost({
     `${String(date.getMinutes()).padStart(2, "0")}` + // Minutes
     `${String(date.getMilliseconds()).padStart(3, "0")}`;
 
-  const HandelSumit = (e) => {
+  const HandelSumit = async (e) => {
     e.preventDefault();
     let invalid = true;
     const postDescValue = postDescRef.current.value;
@@ -38,7 +39,12 @@ export default function CreatPost({
       invalid = false;
       console.log("it false ");
     }
-
+    let imgeURl = null;
+    if (postImageFile) {
+      imgeURl = await UploadPicToFireStorge(postImageFile, editDate);
+      console.log("/////", imgeURl);
+    }
+    console.log("/////", imgeURl);
     const writeToFireSrore = async () => {
       try {
         const docRef = await addDoc(factoriesCollection, {
@@ -53,24 +59,24 @@ export default function CreatPost({
           photoOFBost: postImageFile
             ? editDate + (auth?.currentUser?.email ?? "")
             : null,
+          imgeURl: imgeURl ?? null,
         });
         toast.success("post created sucess");
         const postId = docRef.id;
+
         handleDataAfterPost({
+          id: postId, // I want to pass here Id of the irem  what should I write ??
           descrption: postDescValue,
           userId: auth?.currentUser?.uid ?? null,
           email: auth?.currentUser?.email ?? null,
           date: date,
           userName: auth?.currentUser?.displayName ?? null,
           photoURL: auth?.currentUser?.photoURL ?? null,
-          photoOFBost: postImageFile
-            ? editDate + (auth?.currentUser?.email ?? "")
-            : null,
+          imgeURl: imgeURl ?? null,
+          photoOFBost: imgeURl ?? "08010326835khaledhishamays16@gmail.com",
+
+          //,
         });
-        UploadPicToFireStorge(
-          postImageFile,
-          editDate + (auth?.currentUser?.email ?? "")
-        );
         nagigate("/");
       } catch (error) {
         toast.error("there is error try to refresh the page");
@@ -122,19 +128,42 @@ export default function CreatPost({
       const filesFolderRef = ref(storage, `postpic/${itt}`);
       try {
         await uploadBytes(filesFolderRef, postImageFile);
+        const theurlofpic = await getDownloadURL(filesFolderRef);
+        return theurlofpic;
       } catch (error) {
         toast.error("there is error in picture");
         console.log(error);
       }
-    } else return;
+    } else return null;
   };
 
   const { user, itemWantToUpdate } = useContext(UserContext);
-  //console.log("====================================");
-  // console.log(user.userId);
-  //.log("====================================");
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({
+          username: user.displayName,
+          userId: user.uid,
+          email: user.email,
+          isLog: true,
+          photoURL: user.photoURL,
+        });
+      } else {
+        setUser({
+          username: null,
+          userId: null,
+          email: null,
+          isLog: false,
+          photoURL: null,
+        });
+      }
+    });
+    return () => unsubscribe();
+
+    console.log("user", user); // why when I refresh the page it = null
+    console.log("user.userId", user.userId); // why when I refresh the page it = null
+
     if (!user.userId) {
       nagigate("/login");
       console.log("nooooooooooooooooo");
@@ -194,7 +223,7 @@ export default function CreatPost({
 
             <div>
               <button
-                type="Post"
+                type="submit"
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {mood == "add" ? "creat Post" : "edit"}

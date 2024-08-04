@@ -55,6 +55,7 @@ function App() {
         }));
 
         setItems(cleanResData);
+        console.log(items);
         await fetchUrls(cleanResData);
       } catch (error) {
         console.log(error);
