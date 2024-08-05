@@ -32,7 +32,7 @@ export default function NavBar() {
 
   return (
     <div>
-      <div className="navbar bg-base-100 shadow-lg">
+      <div className="navbar bg-base-100 shadow-lg     fixed top-0 left-0 w-full z-50">
         <div className="flex-1 ">
           <NavLink to={"/"} className="btn btn-ghost   text-3xl text-blue-700 ">
             <h1 className="text-4xl font-semibold text-gray-800 cursor-pointer font-serif">
@@ -94,6 +94,7 @@ export default function NavBar() {
           ""
         )}
       </div>
+      <div className="pt-16">{/* to make  margin */}</div>
     </div>
   );
 }
